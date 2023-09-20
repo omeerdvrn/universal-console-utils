@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { languageMappingsWithText, languageMappingsBase } from './constants/configs';
+import { languageMappingsWithText, languageMappingsBase, languageImportMappings } from './constants/configs';
 
 export const insertLogWithText = (selectedText: string, range: vscode.Range, resolve: any = Promise.resolve) => {
     const editor = vscode.window.activeTextEditor;
@@ -60,6 +60,15 @@ export const getLogStatementWithText = (logText: string, languageId: string): st
     return logStatement;
 };
 
+export const getImportStatement = (languageId: string): string => {
+    const templateText = languageImportMappings[languageId];
+    if (!templateText) {
+        vscode.window.showErrorMessage(`The language used in this file is not supported.`);
+        return '';
+    }
+    return templateText;
+};
+
 const getLogStatementBase = (languageId: string): string => {
     const templateText = languageMappingsBase[languageId];
     if (!templateText) {
@@ -68,3 +77,22 @@ const getLogStatementBase = (languageId: string): string => {
     }
     return templateText;
 };
+
+
+export const setTextToTheSecondLine = (text: string, editor: vscode.TextEditor) => {
+	const firstLine = new vscode.Range(new vscode.Position(1, 0), new vscode.Position(1, 0));
+	editor.edit((editBuilder: vscode.TextEditorEdit) => {
+		editBuilder.insert(firstLine.start, text);
+	});
+}
+
+export const checkIfTextExist = (text: string, editor: vscode.TextEditor) => {
+	const document = editor.document;
+	const textToSearch = text;
+	const regex = new RegExp(textToSearch, 'g');
+	const match = document.getText().match(regex);
+	if (match) {
+		return true;
+	}
+	return false;
+}

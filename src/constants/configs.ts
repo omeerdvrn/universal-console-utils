@@ -28,6 +28,21 @@ export const languageMappingsBase: {[key: string]: string} = {
     vue: "console.log();",
 };
 
+export const languageImportMappings: {[key: string]: string} = {
+    c: "#include <stdio.h>",
+    cpp: "#include <iostream>",
+    go: "import \"fmt\"",
+    java: "import java.util.*;",
+    javascript: "",
+    javascriptreact: "",
+    php: "",
+    python: "",
+    ruby: "",
+    typescript: "",
+    typescriptreact: "",
+    vue: "",
+};
+
 // abap
 // bat
 // bibtex

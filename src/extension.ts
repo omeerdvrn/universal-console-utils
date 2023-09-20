@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getLogStatementWithText } from './helpers';
+import { getLogStatementWithText, getImportStatement, checkIfTextExist, setTextToTheSecondLine } from './helpers';
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "Universal Console Utils" is now active!');
@@ -12,12 +12,20 @@ export function activate(context: vscode.ExtensionContext) {
 		const text = editor.selections.map((sel: vscode.Selection) =>
 			editor.document.getText(sel)
 		);
+
+		const langId = editor.document.languageId;
+		const importStatement = getImportStatement(langId);
+
+		if(!checkIfTextExist(importStatement, editor)) {
+			setTextToTheSecondLine(importStatement, editor);
+		}
+
 		vscode.commands.executeCommand('editor.action.insertLineAfter')
 			.then(() => {
 				text.reduce((acc: Promise<any>, _text: string, index: number) => {
 					return acc.then(res => {
 						return new Promise(resolve => {
-							const logToInsert = getLogStatementWithText(_text, editor.document.languageId);
+							const logToInsert = getLogStatementWithText(_text, langId);
 							const range = new vscode.Range(editor.selections[index].start, editor.selections[index].end);
 							editor.edit((editBuilder: vscode.TextEditorEdit) => {
 								editBuilder.replace(range, logToInsert);
@@ -46,6 +54,8 @@ function cursorPlacement() {
 		value: 1
 	});
 }
+
+
 
 // this method is called when your extension is deactivated
 export function deactivate() { }
